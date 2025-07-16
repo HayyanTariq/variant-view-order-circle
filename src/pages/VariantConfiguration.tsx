@@ -26,99 +26,192 @@ export interface Product {
   colors: ColorVariant[];
 }
 
-// Mock data with hierarchical structure: products -> colors -> sizes
+// Real data based on the spreadsheet images showing men's pants inventory
 const mockProducts: Product[] = [
   {
-    id: "jeans-511",
-    name: "Jeans 511",
+    id: "pantalon-de-hombre-501-original",
+    name: "Pantalon de Hombre 84501-33 501 ORIGINAL",
     colors: [
       {
-        color: "red",
+        color: "medium indigo print",
         sizes: [
-          { size: "xs", availableQuantity: 25, requiredQuantity: 0 },
-          { size: "sm", availableQuantity: 105, requiredQuantity: 0 },
-          { size: "md", availableQuantity: 80, requiredQuantity: 0 },
-          { size: "lg", availableQuantity: 65, requiredQuantity: 0 },
-          { size: "xl", availableQuantity: 45, requiredQuantity: 0 },
-          { size: "xxl", availableQuantity: 30, requiredQuantity: 0 }
-        ]
-      },
-      {
-        color: "blue",
-        sizes: [
-          { size: "sm", availableQuantity: 40, requiredQuantity: 0 },
-          { size: "md", availableQuantity: 55, requiredQuantity: 0 },
-          { size: "lg", availableQuantity: 35, requiredQuantity: 0 },
-          { size: "xl", availableQuantity: 20, requiredQuantity: 0 }
+          { size: "28", availableQuantity: 10, requiredQuantity: 0 },
+          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "30", availableQuantity: 105, requiredQuantity: 0 },
+          { size: "31", availableQuantity: 246, requiredQuantity: 0 },
+          { size: "32", availableQuantity: 95, requiredQuantity: 0 },
+          { size: "33", availableQuantity: 174, requiredQuantity: 0 },
+          { size: "34", availableQuantity: 184, requiredQuantity: 0 }
         ]
       }
     ]
   },
   {
-    id: "abc-jacket",
-    name: "ABC Jacket", 
+    id: "pantalon-511-slim",
+    name: "Pantalon de Hombre 84511-55 511 SLIM",
     colors: [
       {
-        color: "orange",
+        color: "dark indigo worn in",
         sizes: [
-          { size: "xs", availableQuantity: 15, requiredQuantity: 0 },
-          { size: "sm", availableQuantity: 2, requiredQuantity: 0 },
-          { size: "md", availableQuantity: 45, requiredQuantity: 0 },
-          { size: "lg", availableQuantity: 63, requiredQuantity: 0 },
-          { size: "xl", availableQuantity: 28, requiredQuantity: 0 },
-          { size: "xxl", availableQuantity: 12, requiredQuantity: 0 },
-          { size: "xxxl", availableQuantity: 8, requiredQuantity: 0 }
+          { size: "28", availableQuantity: 7, requiredQuantity: 0 },
+          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "31", availableQuantity: 7, requiredQuantity: 0 },
+          { size: "32", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "33", availableQuantity: 52, requiredQuantity: 0 },
+          { size: "34", availableQuantity: 21, requiredQuantity: 0 },
+          { size: "36", availableQuantity: 4, requiredQuantity: 0 },
+          { size: "38", availableQuantity: 3, requiredQuantity: 0 }
         ]
       },
       {
-        color: "black",
+        color: "calm & cool",
         sizes: [
-          { size: "sm", availableQuantity: 35, requiredQuantity: 0 },
-          { size: "md", availableQuantity: 50, requiredQuantity: 0 },
-          { size: "lg", availableQuantity: 40, requiredQuantity: 0 }
+          { size: "28", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "31", availableQuantity: 57, requiredQuantity: 0 },
+          { size: "32", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "33", availableQuantity: 24, requiredQuantity: 0 },
+          { size: "34", availableQuantity: 11, requiredQuantity: 0 },
+          { size: "36", availableQuantity: 4, requiredQuantity: 0 },
+          { size: "38", availableQuantity: 7, requiredQuantity: 0 }
+        ]
+      },
+      {
+        color: "wanna go back",
+        sizes: [
+          { size: "28", availableQuantity: 45, requiredQuantity: 0 },
+          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "31", availableQuantity: 42, requiredQuantity: 0 },
+          { size: "32", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "33", availableQuantity: 24, requiredQuantity: 0 },
+          { size: "34", availableQuantity: 11, requiredQuantity: 0 },
+          { size: "36", availableQuantity: 4, requiredQuantity: 0 },
+          { size: "38", availableQuantity: 1, requiredQuantity: 0 }
+        ]
+      },
+      {
+        color: "agata m",
+        sizes: [
+          { size: "28", availableQuantity: 194, requiredQuantity: 0 },
+          { size: "29", availableQuantity: 41, requiredQuantity: 0 },
+          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "31", availableQuantity: 435, requiredQuantity: 0 },
+          { size: "32", availableQuantity: 74, requiredQuantity: 0 },
+          { size: "33", availableQuantity: 170, requiredQuantity: 0 },
+          { size: "34", availableQuantity: 216, requiredQuantity: 0 },
+          { size: "36", availableQuantity: 110, requiredQuantity: 0 },
+          { size: "38", availableQuantity: 45, requiredQuantity: 0 }
+        ]
+      },
+      {
+        color: "azulache m",
+        sizes: [
+          { size: "28", availableQuantity: 34, requiredQuantity: 0 },
+          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "31", availableQuantity: 34, requiredQuantity: 0 },
+          { size: "32", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "33", availableQuantity: 2, requiredQuantity: 0 },
+          { size: "34", availableQuantity: 3, requiredQuantity: 0 },
+          { size: "36", availableQuantity: 4, requiredQuantity: 0 },
+          { size: "38", availableQuantity: 2, requiredQuantity: 0 }
         ]
       }
     ]
   },
   {
-    id: "premium-denim",
-    name: "Premium Denim",
+    id: "pantalon-510-skinny",
+    name: "Pantalon de Hombre 84510-12 510 SKINNY",
     colors: [
       {
-        color: "blue",
+        color: "sunset down",
         sizes: [
-          { size: "sm", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "md", availableQuantity: 5, requiredQuantity: 0 },
-          { size: "lg", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "xl", availableQuantity: 15, requiredQuantity: 0 }
+          { size: "28", availableQuantity: 67, requiredQuantity: 0 },
+          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "31", availableQuantity: 67, requiredQuantity: 0 },
+          { size: "32", availableQuantity: 1, requiredQuantity: 0 },
+          { size: "33", availableQuantity: 12, requiredQuantity: 0 },
+          { size: "34", availableQuantity: 22, requiredQuantity: 0 },
+          { size: "36", availableQuantity: 24, requiredQuantity: 0 }
+        ]
+      },
+      {
+        color: "just in time do adv",
+        sizes: [
+          { size: "28", availableQuantity: 24, requiredQuantity: 0 },
+          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "31", availableQuantity: 24, requiredQuantity: 0 },
+          { size: "32", availableQuantity: 3, requiredQuantity: 0 },
+          { size: "33", availableQuantity: 4, requiredQuantity: 0 },
+          { size: "34", availableQuantity: 4, requiredQuantity: 0 },
+          { size: "36", availableQuantity: 6, requiredQuantity: 0 }
         ]
       }
     ]
   },
   {
-    id: "classic-tee",
-    name: "Classic Tee",
+    id: "pantalon-512-slim-taper",
+    name: "Pantalon de Hombre 23233-11 512 SLIM TAPER",
     colors: [
       {
-        color: "white",
+        color: "just kickin it adv",
         sizes: [
-          { size: "xs", availableQuantity: 50, requiredQuantity: 0 },
-          { size: "sm", availableQuantity: 75, requiredQuantity: 0 },
-          { size: "md", availableQuantity: 192, requiredQuantity: 0 },
-          { size: "lg", availableQuantity: 120, requiredQuantity: 0 },
-          { size: "xl", availableQuantity: 95, requiredQuantity: 0 },
-          { size: "xxl", availableQuantity: 40, requiredQuantity: 0 },
-          { size: "xxxl", availableQuantity: 25, requiredQuantity: 0 },
-          { size: "xxxxl", availableQuantity: 15, requiredQuantity: 0 }
+          { size: "28", availableQuantity: 31, requiredQuantity: 0 },
+          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "31", availableQuantity: 31, requiredQuantity: 0 },
+          { size: "32", availableQuantity: 4, requiredQuantity: 0 },
+          { size: "33", availableQuantity: 6, requiredQuantity: 0 },
+          { size: "34", availableQuantity: 12, requiredQuantity: 0 },
+          { size: "36", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "38", availableQuantity: 14, requiredQuantity: 0 }
         ]
       },
       {
-        color: "black",
+        color: "escape with me od ab",
         sizes: [
-          { size: "sm", availableQuantity: 60, requiredQuantity: 0 },
-          { size: "md", availableQuantity: 85, requiredQuantity: 0 },
-          { size: "lg", availableQuantity: 70, requiredQuantity: 0 },
-          { size: "xl", availableQuantity: 45, requiredQuantity: 0 }
+          { size: "28", availableQuantity: 14, requiredQuantity: 0 },
+          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "31", availableQuantity: 14, requiredQuantity: 0 },
+          { size: "32", availableQuantity: 1, requiredQuantity: 0 },
+          { size: "33", availableQuantity: 4, requiredQuantity: 0 },
+          { size: "34", availableQuantity: 2, requiredQuantity: 0 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "pantalon-514-straight",
+    name: "Pantalon de Hombre 84514-19 514 STRAIGHT",
+    colors: [
+      {
+        color: "clear rum adv",
+        sizes: [
+          { size: "28", availableQuantity: 32, requiredQuantity: 0 },
+          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "31", availableQuantity: 32, requiredQuantity: 0 },
+          { size: "32", availableQuantity: 5, requiredQuantity: 0 },
+          { size: "33", availableQuantity: 6, requiredQuantity: 0 },
+          { size: "34", availableQuantity: 3, requiredQuantity: 0 }
+        ]
+      },
+      {
+        color: "calm & cool",
+        sizes: [
+          { size: "28", availableQuantity: 27, requiredQuantity: 0 },
+          { size: "29", availableQuantity: 269, requiredQuantity: 0 },
+          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
+          { size: "31", availableQuantity: 333, requiredQuantity: 0 },
+          { size: "32", availableQuantity: 3, requiredQuantity: 0 },
+          { size: "33", availableQuantity: 4, requiredQuantity: 0 },
+          { size: "34", availableQuantity: 7, requiredQuantity: 0 }
         ]
       }
     ]
