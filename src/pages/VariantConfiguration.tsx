@@ -302,6 +302,10 @@ const VariantConfiguration = () => {
     }
   };
 
+  // For the main product dropdown, use unique product names only
+  const uniqueProductNames = Array.from(new Set(productNames));
+  const uniqueMockProducts = uniqueProductNames.map(name => mockProducts.find(p => p.name === name)).filter(Boolean);
+
   return (
     <div className="min-h-screen bg-secondary">
       {/* Header */}
@@ -350,13 +354,25 @@ const VariantConfiguration = () => {
                 <Label htmlFor="main-product-autocomplete" className="text-sm font-medium">
                   Select Main Product
                 </Label>
-                <Autocomplete
-                  id="main-product-autocomplete"
-                  options={mockProducts.map(p => ({ label: p.name, value: p.id }))}
-                  value={selectedProduct?.id || ""}
-                  onChange={handleProductSelect}
-                  placeholder="Type to search main product..."
-                />
+                <div className="relative">
+                  <Autocomplete
+                    id="main-product-autocomplete"
+                    options={uniqueMockProducts.map(p => ({ label: p.name, value: p.id }))}
+                    value={selectedProduct?.id || ""}
+                    onChange={handleProductSelect}
+                    placeholder="Type to search main product..."
+                  />
+                  {selectedProduct && (
+                    <button
+                      type="button"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      onClick={() => handleProductSelect("")}
+                      aria-label="Clear"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Color/Style Autocomplete */}
@@ -366,14 +382,26 @@ const VariantConfiguration = () => {
                 </Label>
                 <div className="flex items-center gap-2">
                   <div className="flex-1">
-                    <Autocomplete
-                      id="color-style-autocomplete"
-                      options={selectedProduct?.colors.map(c => ({ label: c.color, value: c.color })) || []}
-                      value={selectedColor}
-                      onChange={setSelectedColor}
-                      placeholder={selectedProduct ? "Type to search color/style..." : "Select main product first"}
-                      disabled={!selectedProduct}
-                    />
+                    <div className="relative">
+                      <Autocomplete
+                        id="color-style-autocomplete"
+                        options={selectedProduct?.colors.map(c => ({ label: c.color, value: c.color })) || []}
+                        value={selectedColor}
+                        onChange={setSelectedColor}
+                        placeholder={selectedProduct ? "Type to search color/style..." : "Select main product first"}
+                        disabled={!selectedProduct}
+                      />
+                      {selectedColor && (
+                        <button
+                          type="button"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          onClick={() => setSelectedColor("")}
+                          aria-label="Clear"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <Button type="button" variant="outline" size="sm" onClick={() => setShowReview(true)} disabled={!selectedProduct || !selectedColor}>
                     Review Order
@@ -402,7 +430,7 @@ const VariantConfiguration = () => {
               </div>
 
               {/* Multi-column layout for sizes */}
-              <div className="grid gap-2 mb-4" style={{ gridTemplateColumns: `repeat(${Math.min(sizeColumns.length, 3)}, 1fr)` }}>
+              <div className="grid gap-2 mb-4 w-full grid-cols-4">
                 {sizeColumns.map((columnSizes, columnIndex) => (
                   <div key={columnIndex} className={`space-y-2 ${columnIndex !== 0 ? 'border-l border-border pl-6 pr-3' : ''}`}>
                     <div className="grid grid-cols-3 gap-2 pb-1 border-b border-border">
