@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Autocomplete } from "@/components/ui/Autocomplete";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 
 export interface SizeDetail {
   size: string;
@@ -136,35 +137,132 @@ const VariantConfiguration = () => {
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [sizeDetails, setSizeDetails] = useState<SizeDetail[]>([]);
   const [loading, setLoading] = useState(false);
+  // Add state for showing review view
+  const [showReview, setShowReview] = useState(false);
+  // Add global inventory state
+  const [allInventory, setAllInventory] = useState<{
+    productId: string;
+    productName: string;
+    color: string;
+    size: string;
+    requiredQuantity: number;
+  }[]>([]);
 
-  useEffect(() => {
-    // Reset color and size details when product changes
-    setSelectedColor("");
-    setSizeDetails([]);
-  }, [selectedProduct]);
-
-  useEffect(() => {
-    if (selectedProduct && selectedColor) {
-      const colorVariant = selectedProduct.colors.find(c => c.color === selectedColor);
-      if (colorVariant) {
-        setSizeDetails([...colorVariant.sizes]);
-      }
-    }
-  }, [selectedProduct, selectedColor]);
-
-  const handleProductSelect = (productId: string) => {
-    const product = mockProducts.find(p => p.id === productId);
-    setSelectedProduct(product || null);
+  // Helper to sync sizeDetails with allInventory
+  const syncSizeDetailsWithInventory = (productId: string, productName: string, color: string) => {
+    const inventoryForSelection = allInventory.filter(
+      inv => inv.productId === productId && inv.color === color
+    );
+    return (selectedProduct?.colors.find(c => c.color === color)?.sizes || []).map(sizeDetail => {
+      const found = inventoryForSelection.find(inv => inv.size === sizeDetail.size);
+      return {
+        ...sizeDetail,
+        requiredQuantity: found ? found.requiredQuantity : 0
+      };
+    });
   };
 
+  // When product or color changes, load from allInventory
+  useEffect(() => {
+    if (selectedProduct && selectedColor) {
+      setSizeDetails(syncSizeDetailsWithInventory(selectedProduct.id, selectedProduct.name, selectedColor));
+    }
+  }, [selectedProduct, selectedColor, allInventory]);
+
+  // Update allInventory when a required quantity is changed
   const handleQuantityChange = (size: string, quantity: number) => {
-    setSizeDetails(prev => 
-      prev.map(detail => 
-        detail.size === size 
+    setSizeDetails(prev =>
+      prev.map(detail =>
+        detail.size === size
           ? { ...detail, requiredQuantity: Math.max(0, quantity) }
           : detail
       )
     );
+    if (selectedProduct && selectedColor) {
+      setAllInventory(prev => {
+        const idx = prev.findIndex(
+          inv =>
+            inv.productId === selectedProduct.id &&
+            inv.color === selectedColor &&
+            inv.size === size
+        );
+        if (idx !== -1) {
+          // Update existing
+          const updated = [...prev];
+          updated[idx] = {
+            ...updated[idx],
+            requiredQuantity: Math.max(0, quantity)
+          };
+          return updated.filter(inv => inv.requiredQuantity > 0); // Remove if 0
+        } else if (quantity > 0) {
+          // Add new
+          return [
+            ...prev,
+            {
+              productId: selectedProduct.id,
+              productName: selectedProduct.name,
+              color: selectedColor,
+              size,
+              requiredQuantity: Math.max(0, quantity)
+            }
+          ];
+        } else {
+          return prev;
+        }
+      });
+    }
+  };
+
+  // In the review modal, show allInventory with requiredQuantity > 0
+  // Editing in the review modal should update allInventory and, if the row matches the current selection, also update sizeDetails
+  const handleReviewQuantityChange = (productId: string, color: string, size: string, quantity: number) => {
+    setAllInventory(prev => {
+      const idx = prev.findIndex(
+        inv => inv.productId === productId && inv.color === color && inv.size === size
+      );
+      if (idx !== -1) {
+        const updated = [...prev];
+        updated[idx] = {
+          ...updated[idx],
+          requiredQuantity: Math.max(0, quantity)
+        };
+        return updated.filter(inv => inv.requiredQuantity > 0);
+      } else if (quantity > 0) {
+        // Should not happen, but for completeness
+        return [
+          ...prev,
+          {
+            productId,
+            productName: selectedProduct?.name || "",
+            color,
+            size,
+            requiredQuantity: Math.max(0, quantity)
+          }
+        ];
+      } else {
+        return prev;
+      }
+    });
+    // If this is the current selection, update sizeDetails too
+    if (
+      selectedProduct &&
+      selectedColor &&
+      productId === selectedProduct.id &&
+      color === selectedColor
+    ) {
+      setSizeDetails(prev =>
+        prev.map(detail =>
+          detail.size === size
+            ? { ...detail, requiredQuantity: Math.max(0, quantity) }
+            : detail
+        )
+      );
+    }
+  };
+
+  const handleProductSelect = (productId: string) => {
+    const product = mockProducts.find(p => p.id === productId);
+    setSelectedProduct(product || null);
   };
 
   const handleSave = async () => {
@@ -266,14 +364,21 @@ const VariantConfiguration = () => {
                 <Label htmlFor="color-style-autocomplete" className="text-sm font-medium">
                   Select Color/Style
                 </Label>
-                <Autocomplete
-                  id="color-style-autocomplete"
-                  options={selectedProduct?.colors.map(c => ({ label: c.color, value: c.color })) || []}
-                  value={selectedColor} 
-                  onChange={setSelectedColor}
-                  placeholder={selectedProduct ? "Type to search color/style..." : "Select main product first"}
-                  disabled={!selectedProduct}
-                />
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Autocomplete
+                      id="color-style-autocomplete"
+                      options={selectedProduct?.colors.map(c => ({ label: c.color, value: c.color })) || []}
+                      value={selectedColor}
+                      onChange={setSelectedColor}
+                      placeholder={selectedProduct ? "Type to search color/style..." : "Select main product first"}
+                      disabled={!selectedProduct}
+                    />
+                  </div>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setShowReview(true)} disabled={!selectedProduct || !selectedColor}>
+                    Review Order
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -371,6 +476,101 @@ const VariantConfiguration = () => {
           )}
         </div>
       </div>
+
+      {/* Below the selection controls Card, show the review view if showReview is true */}
+      <Dialog open={showReview} onOpenChange={setShowReview}>
+        <DialogContent className="max-w-3xl w-full p-8">
+          <DialogHeader>
+            <DialogTitle>Review & Edit Inventory</DialogTitle>
+          </DialogHeader>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs">
+              <thead>
+                <tr className="border-b">
+                  <th className="px-2 py-1 text-left">Product/Variant</th>
+                  <th className="px-2 py-1 text-left">Available Quantity</th>
+                  <th className="px-2 py-1 text-left">Ordered Quantity</th>
+                  <th className="px-2 py-1 text-left">Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allInventory.filter(inv => inv.requiredQuantity > 0).map(inv => {
+                  // Find available quantity from mock data
+                  const product = mockProducts.find(p => p.id === inv.productId);
+                  const colorObj = product?.colors.find(c => c.color === inv.color);
+                  const sizeObj = colorObj?.sizes.find(s => s.size === inv.size);
+                  const available = sizeObj?.availableQuantity ?? 0;
+                  const cost = 4.99; // mock cost per item
+                  return (
+                    <tr key={`${inv.productId}-${inv.color}-${inv.size}`} className="border-b">
+                      <td className="px-2 py-1 font-medium">
+                        {inv.productName} - {inv.size} - {inv.color}
+                      </td>
+                      <td className="px-2 py-1">{available}</td>
+                      <td className="px-2 py-1">
+                        <Input
+                          type="number"
+                          min="0"
+                          max={available}
+                          value={inv.requiredQuantity}
+                          onChange={e => handleReviewQuantityChange(inv.productId, inv.color, inv.size, parseInt(e.target.value) || 0)}
+                          className="w-16 h-7 px-1 py-0 text-xs text-center"
+                        />
+                      </td>
+                      <td className="px-2 py-1">${(cost * inv.requiredQuantity).toFixed(2)}</td>
+                    </tr>
+                  );
+                })}
+                {allInventory.filter(inv => inv.requiredQuantity > 0).length === 0 && (
+                  <tr><td colSpan={4} className="text-center text-muted-foreground py-2">No inventory entered yet.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          {allInventory.filter(inv => inv.requiredQuantity > 0).length > 0 && (
+            <div className="bg-[#eaf6f6] rounded p-4 mt-4 max-w-md ml-auto">
+              {(() => {
+                const costPerItem = 4.99;
+                const totalQty = allInventory.reduce((sum, inv) => sum + inv.requiredQuantity, 0);
+                const subtotal = allInventory.reduce((sum, inv) => sum + inv.requiredQuantity * costPerItem, 0);
+                return (
+                  <table className="w-full text-sm">
+                    <tbody>
+                      <tr>
+                        <td className="text-xs text-muted-foreground">Total Quantity</td>
+                        <td className="text-right font-medium">{totalQty}</td>
+                      </tr>
+                      <tr className="border-t">
+                        <td className="py-1">Subtotal</td>
+                        <td className="text-right">${subtotal.toFixed(2)}</td>
+                      </tr>
+                      <tr className="border-t">
+                        <td className="py-1">Additional Discount</td>
+                        <td className="text-right">$0</td>
+                      </tr>
+                      <tr className="border-t">
+                        <td className="py-1">Shipping</td>
+                        <td className="text-right">TBD</td>
+                      </tr>
+                      <tr className="border-t">
+                        <td className="py-1">Tax (0%)</td>
+                        <td className="text-right">$0</td>
+                      </tr>
+                      <tr className="border-t">
+                        <td className="py-1 font-bold">Total</td>
+                        <td className="text-right font-bold text-lg">${subtotal.toFixed(2)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                );
+              })()}
+            </div>
+          )}
+          <DialogClose asChild>
+            <Button type="button" size="sm" variant="ghost" className="mt-4 w-full">Close</Button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
