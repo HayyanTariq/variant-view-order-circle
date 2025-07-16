@@ -105,13 +105,23 @@ const Index = () => {
                     <Badge className="bg-success-light text-success border-success/20">
                       {product.status}
                     </Badge>
-                    <Button 
-                      onClick={() => navigate(`/products/${product.id}/variants`)}
-                      size="sm"
-                    >
-                      <Eye className="h-4 w-4 mr-2" />
-                      View Variants
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline"
+                        onClick={() => navigate(`/products/${product.id}/variants`)}
+                        size="sm"
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Variants
+                      </Button>
+                      <Button 
+                        onClick={() => navigate("/configure-variants")}
+                        size="sm"
+                      >
+                        <Package className="h-4 w-4 mr-2" />
+                        Configure
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </Card>
