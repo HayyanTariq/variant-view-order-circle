@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Package, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { Autocomplete } from "@/components/ui/Autocomplete";
 
 export interface SizeDetail {
   size: string;
@@ -26,197 +26,108 @@ export interface Product {
   colors: ColorVariant[];
 }
 
-// Real data based on the spreadsheet images showing men's pants inventory
-const mockProducts: Product[] = [
-  {
-    id: "pantalon-de-hombre-501-original",
-    name: "Pantalon de Hombre 84501-33 501 ORIGINAL",
-    colors: [
-      {
-        color: "medium indigo print",
-        sizes: [
-          { size: "28", availableQuantity: 10, requiredQuantity: 0 },
-          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "30", availableQuantity: 105, requiredQuantity: 0 },
-          { size: "31", availableQuantity: 246, requiredQuantity: 0 },
-          { size: "32", availableQuantity: 95, requiredQuantity: 0 },
-          { size: "33", availableQuantity: 174, requiredQuantity: 0 },
-          { size: "34", availableQuantity: 184, requiredQuantity: 0 }
-        ]
-      }
-    ]
-  },
-  {
-    id: "pantalon-511-slim",
-    name: "Pantalon de Hombre 84511-55 511 SLIM",
-    colors: [
-      {
-        color: "dark indigo worn in",
-        sizes: [
-          { size: "28", availableQuantity: 7, requiredQuantity: 0 },
-          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "31", availableQuantity: 7, requiredQuantity: 0 },
-          { size: "32", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "33", availableQuantity: 52, requiredQuantity: 0 },
-          { size: "34", availableQuantity: 21, requiredQuantity: 0 },
-          { size: "36", availableQuantity: 4, requiredQuantity: 0 },
-          { size: "38", availableQuantity: 3, requiredQuantity: 0 }
-        ]
-      },
-      {
-        color: "calm & cool",
-        sizes: [
-          { size: "28", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "31", availableQuantity: 57, requiredQuantity: 0 },
-          { size: "32", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "33", availableQuantity: 24, requiredQuantity: 0 },
-          { size: "34", availableQuantity: 11, requiredQuantity: 0 },
-          { size: "36", availableQuantity: 4, requiredQuantity: 0 },
-          { size: "38", availableQuantity: 7, requiredQuantity: 0 }
-        ]
-      },
-      {
-        color: "wanna go back",
-        sizes: [
-          { size: "28", availableQuantity: 45, requiredQuantity: 0 },
-          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "31", availableQuantity: 42, requiredQuantity: 0 },
-          { size: "32", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "33", availableQuantity: 24, requiredQuantity: 0 },
-          { size: "34", availableQuantity: 11, requiredQuantity: 0 },
-          { size: "36", availableQuantity: 4, requiredQuantity: 0 },
-          { size: "38", availableQuantity: 1, requiredQuantity: 0 }
-        ]
-      },
-      {
-        color: "agata m",
-        sizes: [
-          { size: "28", availableQuantity: 194, requiredQuantity: 0 },
-          { size: "29", availableQuantity: 41, requiredQuantity: 0 },
-          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "31", availableQuantity: 435, requiredQuantity: 0 },
-          { size: "32", availableQuantity: 74, requiredQuantity: 0 },
-          { size: "33", availableQuantity: 170, requiredQuantity: 0 },
-          { size: "34", availableQuantity: 216, requiredQuantity: 0 },
-          { size: "36", availableQuantity: 110, requiredQuantity: 0 },
-          { size: "38", availableQuantity: 45, requiredQuantity: 0 }
-        ]
-      },
-      {
-        color: "azulache m",
-        sizes: [
-          { size: "28", availableQuantity: 34, requiredQuantity: 0 },
-          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "31", availableQuantity: 34, requiredQuantity: 0 },
-          { size: "32", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "33", availableQuantity: 2, requiredQuantity: 0 },
-          { size: "34", availableQuantity: 3, requiredQuantity: 0 },
-          { size: "36", availableQuantity: 4, requiredQuantity: 0 },
-          { size: "38", availableQuantity: 2, requiredQuantity: 0 }
-        ]
-      }
-    ]
-  },
-  {
-    id: "pantalon-510-skinny",
-    name: "Pantalon de Hombre 84510-12 510 SKINNY",
-    colors: [
-      {
-        color: "sunset down",
-        sizes: [
-          { size: "28", availableQuantity: 67, requiredQuantity: 0 },
-          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "31", availableQuantity: 67, requiredQuantity: 0 },
-          { size: "32", availableQuantity: 1, requiredQuantity: 0 },
-          { size: "33", availableQuantity: 12, requiredQuantity: 0 },
-          { size: "34", availableQuantity: 22, requiredQuantity: 0 },
-          { size: "36", availableQuantity: 24, requiredQuantity: 0 }
-        ]
-      },
-      {
-        color: "just in time do adv",
-        sizes: [
-          { size: "28", availableQuantity: 24, requiredQuantity: 0 },
-          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "31", availableQuantity: 24, requiredQuantity: 0 },
-          { size: "32", availableQuantity: 3, requiredQuantity: 0 },
-          { size: "33", availableQuantity: 4, requiredQuantity: 0 },
-          { size: "34", availableQuantity: 4, requiredQuantity: 0 },
-          { size: "36", availableQuantity: 6, requiredQuantity: 0 }
-        ]
-      }
-    ]
-  },
-  {
-    id: "pantalon-512-slim-taper",
-    name: "Pantalon de Hombre 23233-11 512 SLIM TAPER",
-    colors: [
-      {
-        color: "just kickin it adv",
-        sizes: [
-          { size: "28", availableQuantity: 31, requiredQuantity: 0 },
-          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "31", availableQuantity: 31, requiredQuantity: 0 },
-          { size: "32", availableQuantity: 4, requiredQuantity: 0 },
-          { size: "33", availableQuantity: 6, requiredQuantity: 0 },
-          { size: "34", availableQuantity: 12, requiredQuantity: 0 },
-          { size: "36", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "38", availableQuantity: 14, requiredQuantity: 0 }
-        ]
-      },
-      {
-        color: "escape with me od ab",
-        sizes: [
-          { size: "28", availableQuantity: 14, requiredQuantity: 0 },
-          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "31", availableQuantity: 14, requiredQuantity: 0 },
-          { size: "32", availableQuantity: 1, requiredQuantity: 0 },
-          { size: "33", availableQuantity: 4, requiredQuantity: 0 },
-          { size: "34", availableQuantity: 2, requiredQuantity: 0 }
-        ]
-      }
-    ]
-  },
-  {
-    id: "pantalon-514-straight",
-    name: "Pantalon de Hombre 84514-19 514 STRAIGHT",
-    colors: [
-      {
-        color: "clear rum adv",
-        sizes: [
-          { size: "28", availableQuantity: 32, requiredQuantity: 0 },
-          { size: "29", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "31", availableQuantity: 32, requiredQuantity: 0 },
-          { size: "32", availableQuantity: 5, requiredQuantity: 0 },
-          { size: "33", availableQuantity: 6, requiredQuantity: 0 },
-          { size: "34", availableQuantity: 3, requiredQuantity: 0 }
-        ]
-      },
-      {
-        color: "calm & cool",
-        sizes: [
-          { size: "28", availableQuantity: 27, requiredQuantity: 0 },
-          { size: "29", availableQuantity: 269, requiredQuantity: 0 },
-          { size: "30", availableQuantity: 0, requiredQuantity: 0 },
-          { size: "31", availableQuantity: 333, requiredQuantity: 0 },
-          { size: "32", availableQuantity: 3, requiredQuantity: 0 },
-          { size: "33", availableQuantity: 4, requiredQuantity: 0 },
-          { size: "34", availableQuantity: 7, requiredQuantity: 0 }
-        ]
-      }
-    ]
-  }
+const productNames = [
+  "501 ORIGINAL",
+  "501 ORIGINAL",
+  "501 ORIGINAL",
+  "501 ORIGINAL",
+  "501 ORIGINAL",
+  "501 ORIGINAL",
+  "501 ORIGINAL",
+  "505 REGULAR FIT",
+  "505 REGULAR FIT",
+  "505 REGULAR",
+  "514 STRAIGHT",
+  "514 STRAIGHT",
+  "514 STRAIGHT",
+  "514 STRAIGHT",
+  "511 SLIM",
+  "511 SLIM",
+  "511 SLIM",
+  "511 SLIM",
+  "511 SLIM",
+  "511 SLIM",
+  "511 SLIM",
+  "511 SLIM",
+  "511 SLIM",
+  "511 SLIM",
+  "511 SLIM",
+  "511 SLIM",
+  "511 SLIM",
+  "511 SLIM",
+  "511 SLIM",
+  "510 SKINNY",
+  "510 SKINNY",
+  "510 SKINNY",
+  "510 SKINNY",
+  "510 SKINNY",
+  "510 SKINNY",
+  "527 STD BOOT CUT",
+  "527 STD BOOT CUT",
+  "541 ATH TAPER BT",
+  "512 SLIM TAPER",
+  "512 SLIM TAPER",
+  "512 SLIM TAPER",
+  "512 SLIM TAPER",
+  "512 SLIM TAPER",
+  "512 SLIM TAPER",
+  "502 TAPER",
+  "502 TAPER",
+  "502 TAPER",
+  "502 TAPER",
+  "502 TAPER",
+  "502 TAPER",
+  "502 TAPER",
+  "LO-BALL CARGO"
 ];
+
+const colorList = [
+  "MEDIUM INDIGO GRMT DYE",
+  "MEX MID 82",
+  "CHOLLA SUBTLE ADAPT TNL",
+  "L4L",
+  "ONEWASH",
+  "STONEWASH",
+  "BLACK STF",
+  "FIRST CLASS",
+  "WE'RE FINALLY LANDING",
+  "RESTORE THE FEELING STR",
+  "TIMBERWOLF",
+  "OLIVE NIGHT CORD",
+  "LAST FOREVER",
+  "FLUORITA",
+  "CLEANER ADV",
+  "CLEAN RUN ADV",
+  "CALM N COOL",
+  "ON THE COOL",
+  "DARK INDIGO WORN IN",
+  "ALWAYS ADAPT",
+  "CALM N COOL",
+  "WANNA GO BACK",
+  "JUST BE YOU"
+];
+
+const sizeHeaders = [
+  "XSmall","Small","Medium","Large","XLarge","XXLarge","2XL","3XL",
+  "L30-W28","L30-W29","L30-W30","L30-W31","L30-W32","L30-W33","L30-W34","L30-W36","L30-W38","L30-W40",
+  "L32-W28","L32-W29","L32-W30","L32-W31","L32-W32","L32-W33","L32-W34","L32-W36","L32-W38","L32-W40",
+  "L32-W42","L32-W44","L32-W46","L32-W48","L32-W50",
+  "L34-W32","L34-W33","L34-W34","L34-W36","L34-W38","L34-W40","L34-W42",
+  "W29","W30","W31"
+];
+
+const mockProducts: Product[] = productNames.map((name, idx) => ({
+  id: name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+  name,
+  colors: colorList.map(color => ({
+    color,
+    sizes: sizeHeaders.map(size => ({
+      size,
+      availableQuantity: Math.floor(Math.random() * 101),
+      requiredQuantity: 0
+    }))
+  }))
+}));
 
 const VariantConfiguration = () => {
   const navigate = useNavigate();
@@ -272,7 +183,7 @@ const VariantConfiguration = () => {
   const hasRequiredQuantities = sizeDetails.some(detail => detail.requiredQuantity > 0);
 
   // Group sizes into columns for multi-column layout
-  const sizesPerColumn = 6;
+  const sizesPerColumn = 12;
   const sizeColumns = [];
   for (let i = 0; i < sizeDetails.length; i += sizesPerColumn) {
     sizeColumns.push(sizeDetails.slice(i, i + sizesPerColumn));
@@ -312,14 +223,13 @@ const VariantConfiguration = () => {
               <div className="flex items-center gap-2">
                 <Package className="h-5 w-5 text-primary" />
                 <h1 className="text-xl font-semibold text-foreground">
-                  Configure Product Variants
+                  Add New Order
                 </h1>
               </div>
             </div>
             {hasRequiredQuantities && (
-              <Button onClick={handleSave} disabled={loading}>
-                <Save className="h-4 w-4 mr-2" />
-                {loading ? "Saving..." : "Save Configuration"}
+              <Button onClick={() => {/* TODO: navigate to review page */}} disabled={!hasRequiredQuantities}>
+                Next
               </Button>
             )}
           </div>
@@ -327,64 +237,50 @@ const VariantConfiguration = () => {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-6 py-6">
-        <div className="grid gap-6">
+      <div className="container mx-auto px-6 py-3">
+        <div className="p-2 bg-muted rounded">
+          <p>
+            <strong></strong> All variant options (color/style and size) are shown on a single page for easy bulk ordering.
+          </p>
+        </div>
+        <div className="grid gap-1">
           {/* Selection Controls */}
-          <Card className="p-6">
+          <Card className="p-5">
             <div className="grid md:grid-cols-2 gap-6">
-              {/* Product Selection */}
-              <div className="space-y-2">
-                <Label htmlFor="product-select" className="text-sm font-medium">
+              {/* Main Product Autocomplete */}
+              <div className="space-y-1">
+                <Label htmlFor="main-product-autocomplete" className="text-sm font-medium">
                   Select Main Product
                 </Label>
-                <Select onValueChange={handleProductSelect}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a product..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockProducts.map(product => (
-                      <SelectItem key={product.id} value={product.id}>
-                        {product.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Autocomplete
+                  id="main-product-autocomplete"
+                  options={mockProducts.map(p => ({ label: p.name, value: p.id }))}
+                  value={selectedProduct?.id || ""}
+                  onChange={handleProductSelect}
+                  placeholder="Type to search main product..."
+                />
               </div>
 
-              {/* Color Selection */}
+              {/* Color/Style Autocomplete */}
               <div className="space-y-2">
-                <Label htmlFor="color-select" className="text-sm font-medium">
-                  Select Color
+                <Label htmlFor="color-style-autocomplete" className="text-sm font-medium">
+                  Select Color/Style
                 </Label>
-                <Select 
+                <Autocomplete
+                  id="color-style-autocomplete"
+                  options={selectedProduct?.colors.map(c => ({ label: c.color, value: c.color })) || []}
                   value={selectedColor} 
-                  onValueChange={setSelectedColor}
+                  onChange={setSelectedColor}
+                  placeholder={selectedProduct ? "Type to search color/style..." : "Select main product first"}
                   disabled={!selectedProduct}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={selectedProduct ? "Choose a color..." : "Select product first"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {selectedProduct?.colors.map(colorVariant => (
-                      <SelectItem key={colorVariant.color} value={colorVariant.color}>
-                        <div className="flex items-center gap-2 capitalize">
-                          <div 
-                            className="w-3 h-3 rounded-full border border-border"
-                            style={{ backgroundColor: colorVariant.color === 'orange' ? '#f97316' : colorVariant.color }}
-                          />
-                          {colorVariant.color}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                />
               </div>
             </div>
 
             {selectedProduct && selectedColor && (
               <div className="mt-4 p-4 bg-muted rounded-lg">
                 <p className="text-sm text-muted-foreground">
-                  Configuring: <span className="font-medium text-foreground">{selectedProduct.name}</span> in{" "}
+                  Ordering: <span className="font-medium text-foreground">{selectedProduct.name}</span> in{" "}
                   <span className="font-medium text-foreground capitalize">{selectedColor}</span>
                 </p>
               </div>
@@ -393,60 +289,41 @@ const VariantConfiguration = () => {
 
           {/* Size Configuration Grid */}
           {sizeDetails.length > 0 && (
-            <Card className="p-6">
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-2">Size Configuration</h3>
-                <p className="text-sm text-muted-foreground">
-                  Configure required quantities for each available size
+            <Card className="p-3">
+              <div className="mb-3">
+                <p className="text-xs text-muted-foreground">
+                  Order required quantities for each available size
                 </p>
               </div>
 
               {/* Multi-column layout for sizes */}
-              <div className="grid gap-8" style={{ 
-                gridTemplateColumns: `repeat(${Math.min(sizeColumns.length, 3)}, 1fr)` 
-              }}>
+              <div className="grid gap-2 mb-4" style={{ gridTemplateColumns: `repeat(${Math.min(sizeColumns.length, 3)}, 1fr)` }}>
                 {sizeColumns.map((columnSizes, columnIndex) => (
-                  <div key={columnIndex} className="space-y-4">
-                    {/* Column header */}
-                    <div className="grid grid-cols-3 gap-4 pb-2 border-b border-border">
-                      <div className="text-sm font-medium text-muted-foreground">Size</div>
-                      <div className="text-sm font-medium text-muted-foreground">Available</div>
-                      <div className="text-sm font-medium text-muted-foreground">Required</div>
+                  <div key={columnIndex} className={`space-y-2 ${columnIndex !== 0 ? 'border-l border-border pl-6 pr-3' : ''}`}>
+                    <div className="grid grid-cols-3 gap-2 pb-1 border-b border-border">
+                      <div className="text-xs font-medium text-muted-foreground">Size</div>
+                      <div className="text-xs font-medium text-muted-foreground">Available</div>
+                      <div className="text-xs font-medium text-muted-foreground">Required</div>
                     </div>
-
-                    {/* Size rows */}
                     {columnSizes.map((sizeDetail) => {
                       const stockStatus = getStockStatus(sizeDetail.availableQuantity);
                       return (
-                        <div key={sizeDetail.size} className="grid grid-cols-3 gap-4 items-center">
-                          {/* Size */}
-                          <div className="font-medium text-foreground uppercase">
-                            {sizeDetail.size}
+                        <div key={sizeDetail.size} className="grid grid-cols-3 gap-2 items-center">
+                          <div className="font-medium text-foreground uppercase text-xs">{sizeDetail.size}</div>
+                          <div className="flex items-center gap-1">
+                            <span className="text-foreground text-xs">{sizeDetail.availableQuantity}</span>
                           </div>
-
-                          {/* Available Quantity */}
-                          <div className="flex items-center gap-2">
-                            <span className="text-foreground">{sizeDetail.availableQuantity}</span>
-                            <Badge 
-                              variant={getStockBadgeVariant(stockStatus)}
-                              className="text-xs"
-                            >
-                              {stockStatus === "in-stock" && "In Stock"}
-                              {stockStatus === "low-stock" && "Low"}
-                              {stockStatus === "out-of-stock" && "Out"}
-                            </Badge>
+                          <div className="flex justify-center">
+                            <Input
+                              type="number"
+                              min="0"
+                              max={sizeDetail.availableQuantity}
+                              value={sizeDetail.requiredQuantity}
+                              onChange={(e) => handleQuantityChange(sizeDetail.size, parseInt(e.target.value) || 0)}
+                              className="w-full max-w-[60px] h-7 px-1 py-0 text-xs text-center"
+                              disabled={sizeDetail.availableQuantity === 0}
+                            />
                           </div>
-
-                          {/* Required Quantity Input */}
-                          <Input
-                            type="number"
-                            min="0"
-                            max={sizeDetail.availableQuantity}
-                            value={sizeDetail.requiredQuantity}
-                            onChange={(e) => handleQuantityChange(sizeDetail.size, parseInt(e.target.value) || 0)}
-                            className="w-full"
-                            disabled={sizeDetail.availableQuantity === 0}
-                          />
                         </div>
                       );
                     })}
